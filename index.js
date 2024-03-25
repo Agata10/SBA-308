@@ -8,7 +8,7 @@ const CourseInfo = {
 const AssignmentGroup = {
   id: 12345,
   name: "Fundamentals of JavaScript",
-  course_id: 45,
+  course_id: 451,
   group_weight: 25, ///the percentage weight of the entaire assigment group
   assignments: [
     {
@@ -77,11 +77,12 @@ const LearnerSubmissions = [
   },
 ];
 
-// Check is assigment group id matches course id
+// DATA VALIDATION FUNCTIONS
+// Check is AssigmentGroup course_id property matches CourseInfo id value
 const checkAssigmentGroupCourseId = (course, ag) => {
   try {
     if (ag.course_id === course.id) {
-      //console.log("AssigmentGroup object's course_id property matches course id! Yay!");
+      return true;
     } else {
       throw new Error(
         "Oh no! AssigmentGroup's course_id property does not match course id value!"
@@ -91,10 +92,41 @@ const checkAssigmentGroupCourseId = (course, ag) => {
     console.log(`${err}\nPlease enter correct data.\n`);
   }
 };
-const checkLearnerAssigmentId = (ag, submissions) => {};
+
+//check if LearnerSubmissions assigment_id matches one from AssigmentGroup.assigments[i].id
+const checkLearnerSubmissionsAssigmentId = (ag, submissions) => {
+  try {
+    const arrOfAssigmentsIDs = [];
+    ag.assignments.forEach((assigment) => {
+      ///take id of each assigment and store all of them in array
+      arrOfAssigmentsIDs.push(assigment.id);
+    });
+    //for each learner submission
+    submissions.forEach((s) => {
+      for (let i = 0; i < arrOfAssigmentsIDs.length; i++) {
+        //check if assigment_id matches onces from AssigmentGroup assigments ids
+        if (s.assignment_id === arrOfAssigmentsIDs[i]) {
+          return true;
+        } else if (s.assignment_id !== arrOfAssigmentsIDs[i]) {
+          if (i === arrOfAssigmentsIDs.length - 1) {
+            throw new Error(
+              `Ups! Learner with id: ${s.learner_id}, subission assigment of id: ${s.assignment_id} not found!`
+            );
+          }
+          continue;
+        }
+      }
+    });
+  } catch (err) {
+    console.log(
+      `${err}\nPlease make sure LearnerSubmissions has assigment_id matching one from AssigmentGroup assigments ids`
+    );
+  }
+};
 
 function getLearnerData(course, ag, submissions) {
   checkAssigmentGroupCourseId(course, ag);
+  checkLearnerSubmissionsAssigmentId(ag, submissions);
   const result = [
     {
       id: 125,
