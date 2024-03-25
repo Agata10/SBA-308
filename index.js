@@ -124,22 +124,74 @@ const checkLearnerSubmissionsAssigmentId = (ag, submissions) => {
   }
 };
 
+const checkIdDateIsBeforeToday = (date) => {
+  return new Date(date) < new Date(new Date().toDateString());
+};
+
+// Validate the due date of assigment
+checkIfDueDateHasPassed = (ag, id) => {
+  for (let assigment of ag.assignments) {
+    if (assigment.id === id) {
+      if (checkIdDateIsBeforeToday(assigment.due_at)) {
+        //console.log("It has passed due date!");
+        return true;
+      } else {
+        //console.log("Not due yet");
+        return false;
+      }
+    }
+  }
+};
+
 function getLearnerData(course, ag, submissions) {
   checkAssigmentGroupCourseId(course, ag);
   checkLearnerSubmissionsAssigmentId(ag, submissions);
 
+  // outer: for (let s of submissions) {
+  //   const learner = {};
+  //   learner.id = s.learner_id;
+  //   if (checkIfDueDateHasPassed(ag, s.assignment_id)) {
+  //     learner[`${s.assignment_id}`] = "x";
+  //   }
+  //   result.push(learner);
+  //   // for (let obj of result) {
+  //   //   // check if learner with that id is already in result
+  //   //   if (s.learner_id === obj.id) {
+  //   //     continue outer;
+  //   //   }
+  //   // }
+  // }
   const result = [];
-  outer: for (let s of submissions) {
-    for (let obj of result) {
-      // check if learner with that id is already in result
-      if (s.learner_id === obj.id) {
-        continue outer;
-      }
-    }
+
+  submissions.map((s) => {
     const learner = {};
-    learner.id = s.learner_id;
-    result.push(learner);
-  }
+    let avg = 0;
+    //find returns value of first element it found that meets below condition
+    const existingLearner = result.find((r) => r.id === s.learner_id);
+    //const obj = submissions.filter((o) => o.id === submissions.id);
+    const findMaxScore = ag.assignments.filter((a) => {
+      if (a.id === s.assignment_id) return a;
+    });
+
+    if (existingLearner) {
+      //avg += s.submission.score;
+      if (checkIfDueDateHasPassed(ag, s.assignment_id)) {
+        avg =
+          (s.submission.score + existingLearner.avg) /
+          (findMaxScore[0].points_possible + findMaxScore[0].points_possible);
+        console.log(findMaxScore);
+        existingLearner.avg += avg;
+      }
+    } else {
+      learner.id = s.learner_id;
+      console.log(findMaxScore.points_possible);
+      learner.avg = s.submission.score;
+      result.push(learner);
+    }
+
+    return learner;
+  });
+
   // const result = [
   //   {
   //     id: 125,
