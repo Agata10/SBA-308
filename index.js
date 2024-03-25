@@ -8,8 +8,8 @@ const CourseInfo = {
 const AssignmentGroup = {
   id: 12345,
   name: "Fundamentals of JavaScript",
-  course_id: 451,
-  group_weight: 25,
+  course_id: 45,
+  group_weight: 25, ///the percentage weight of the entaire assigment group
   assignments: [
     {
       id: 1,
@@ -24,6 +24,7 @@ const AssignmentGroup = {
       points_possible: 150,
     },
     {
+      //3rd is not inclued cause the assigment is not due yet, not in average and not in the keyed dictonary of scores
       id: 3,
       name: "Code the World",
       due_at: "3156-11-15",
@@ -76,8 +77,24 @@ const LearnerSubmissions = [
   },
 ];
 
+// Check is assigment group id matches course id
+const checkAssigmentGroupCourseId = (course, ag) => {
+  try {
+    if (ag.course_id === course.id) {
+      //console.log("AssigmentGroup object's course_id property matches course id! Yay!");
+    } else {
+      throw new Error(
+        "Oh no! AssigmentGroup's course_id property does not match course id value!"
+      );
+    }
+  } catch (err) {
+    console.log(`${err}\nPlease enter correct data.\n`);
+  }
+};
+const checkLearnerAssigmentId = (ag, submissions) => {};
+
 function getLearnerData(course, ag, submissions) {
-  // here, we would process this data to achieve the desired result.
+  checkAssigmentGroupCourseId(course, ag);
   const result = [
     {
       id: 125,
