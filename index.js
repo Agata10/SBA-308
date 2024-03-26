@@ -147,50 +147,40 @@ function getLearnerData(course, ag, submissions) {
   checkAssigmentGroupCourseId(course, ag);
   checkLearnerSubmissionsAssigmentId(ag, submissions);
 
-  // outer: for (let s of submissions) {
-  //   const learner = {};
-  //   learner.id = s.learner_id;
-  //   if (checkIfDueDateHasPassed(ag, s.assignment_id)) {
-  //     learner[`${s.assignment_id}`] = "x";
-  //   }
-  //   result.push(learner);
-  //   // for (let obj of result) {
-  //   //   // check if learner with that id is already in result
-  //   //   if (s.learner_id === obj.id) {
-  //   //     continue outer;
-  //   //   }
-  //   // }
-  // }
   const result = [];
+  let sumOFMaxPoints = 0;
 
-  submissions.map((s) => {
+  for (let i = 0; i < submissions.length; i++) {
     const learner = {};
     let avg = 0;
-    //find returns value of first element it found that meets below condition
-    const existingLearner = result.find((r) => r.id === s.learner_id);
-    //const obj = submissions.filter((o) => o.id === submissions.id);
-    const findMaxScore = ag.assignments.filter((a) => {
-      if (a.id === s.assignment_id) return a;
-    });
+    if (checkIfDueDateHasPassed(ag, submissions[i].assignment_id)) {
+      const assigment = ag.assignments.find((a) => {
+        return a.id === submissions[i].assignment_id;
+      });
+      const maxPoints = assigment.points_possible;
+      //find() returns value of first element it founds that meet below condition
+      const existingLearner = result.find(
+        (r) => r.id === submissions[i].learner_id
+      );
 
-    if (existingLearner) {
-      //avg += s.submission.score;
-      if (checkIfDueDateHasPassed(ag, s.assignment_id)) {
-        avg =
-          (s.submission.score + existingLearner.avg) /
-          (findMaxScore[0].points_possible + findMaxScore[0].points_possible);
-        console.log(findMaxScore);
+      if (existingLearner) {
+        avg = submissions[i].submission.score;
+        sumOFMaxPoints += maxPoints;
         existingLearner.avg += avg;
+        existingLearner.avg =
+          Math.floor((existingLearner.avg / sumOFMaxPoints) * 100) / 100;
+        existingLearner[`${submissions[i].assignment_id}`] = avg / maxPoints;
+        sumOFMaxPoints = 0;
+      } else {
+        sumOFMaxPoints += maxPoints;
+        learner.id = submissions[i].learner_id;
+        learner.avg = submissions[i].submission.score;
+        learner[`${submissions[i].assignment_id}`] = learner.avg / maxPoints;
+        result.push(learner);
       }
-    } else {
-      learner.id = s.learner_id;
-      console.log(findMaxScore.points_possible);
-      learner.avg = s.submission.score;
-      result.push(learner);
     }
-
-    return learner;
-  });
+  }
+  return result;
 
   // const result = [
   //   {
