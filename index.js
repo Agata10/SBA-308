@@ -8,6 +8,7 @@ const CourseInfo = {
 const AssignmentGroup = {
   id: 12345,
   name: "Fundamentals of JavaScript",
+  ///1. change course_id to mismatch the CourseInfo.id to test try catch
   course_id: 451,
   group_weight: 25, ///the percentage weight of the entaire assigment group
   assignments: [
@@ -20,11 +21,11 @@ const AssignmentGroup = {
     {
       id: 2,
       name: "Write a Function",
+      ///2. change to be not due yet, year 2032 for example
       due_at: "2023-02-27",
       points_possible: 150,
     },
     {
-      //3rd is not inclued cause the assigment is not due yet, not in average and not in the keyed dictonary of scores
       id: 3,
       name: "Code the World",
       due_at: "3156-11-15",
@@ -37,6 +38,8 @@ const AssignmentGroup = {
 const LearnerSubmissions = [
   {
     learner_id: 125,
+    // change assigment for the one that is dffrent from AssigmentGroup.assigments.id
+    // to test try catch
     assignment_id: 1,
     submission: {
       submitted_at: "2023-01-25",
@@ -143,7 +146,7 @@ const checkIfDueDateHasPassed = (ag, id) => {
   }
 };
 
-//calculate average
+//calculate average and round to 3 decimal places
 const calcAvg = (score, maxPoints) => {
   return Math.round((score / maxPoints) * 1000) / 1000;
 };
@@ -155,36 +158,31 @@ function getLearnerData(course, ag, submissions) {
   const result = [];
   let sumOFMaxPoints = 0;
 
-  for (let i = 0; i < submissions.length; i++) {
+  submissions.forEach((s) => {
     const learner = {};
-    let score = submissions[i].submission.score;
-    if (checkIfDueDateHasPassed(ag, submissions[i].assignment_id)) {
+    let score = s.submission.score;
+    if (checkIfDueDateHasPassed(ag, s.assignment_id)) {
       const assigment = ag.assignments.find((a) => {
-        return a.id === submissions[i].assignment_id;
+        return a.id === s.assignment_id;
       });
       const maxPoints = assigment.points_possible;
       //find() returns value of first element it founds that meet below condition
-      const existingLearner = result.find(
-        (r) => r.id === submissions[i].learner_id
-      );
+      const existingLearner = result.find((r) => r.id === s.learner_id);
       sumOFMaxPoints += maxPoints;
 
       if (existingLearner) {
         existingLearner.avg += score;
         existingLearner.avg = calcAvg(existingLearner.avg, sumOFMaxPoints);
-        existingLearner[`${submissions[i].assignment_id}`] = calcAvg(
-          score,
-          maxPoints
-        );
+        existingLearner[`${s.assignment_id}`] = calcAvg(score, maxPoints);
         sumOFMaxPoints = 0;
       } else {
-        learner.id = submissions[i].learner_id;
+        learner.id = s.learner_id;
         learner.avg = score;
-        learner[`${submissions[i].assignment_id}`] = calcAvg(score, maxPoints);
+        learner[`${s.assignment_id}`] = calcAvg(score, maxPoints);
         result.push(learner);
       }
     }
-  }
+  });
   return result;
 
   // const r = [
