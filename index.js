@@ -129,7 +129,7 @@ const checkIdDateIsBeforeToday = (date) => {
 };
 
 // Validate the due date of assigment
-checkIfDueDateHasPassed = (ag, id) => {
+const checkIfDueDateHasPassed = (ag, id) => {
   for (let assigment of ag.assignments) {
     if (assigment.id === id) {
       if (checkIdDateIsBeforeToday(assigment.due_at)) {
@@ -143,6 +143,11 @@ checkIfDueDateHasPassed = (ag, id) => {
   }
 };
 
+//calculate average
+const calcAvg = (score, maxPoints) => {
+  return Math.round((score / maxPoints) * 1000) / 1000;
+};
+
 function getLearnerData(course, ag, submissions) {
   checkAssigmentGroupCourseId(course, ag);
   checkLearnerSubmissionsAssigmentId(ag, submissions);
@@ -152,7 +157,7 @@ function getLearnerData(course, ag, submissions) {
 
   for (let i = 0; i < submissions.length; i++) {
     const learner = {};
-    let avg = 0;
+    let score = submissions[i].submission.score;
     if (checkIfDueDateHasPassed(ag, submissions[i].assignment_id)) {
       const assigment = ag.assignments.find((a) => {
         return a.id === submissions[i].assignment_id;
@@ -162,28 +167,27 @@ function getLearnerData(course, ag, submissions) {
       const existingLearner = result.find(
         (r) => r.id === submissions[i].learner_id
       );
-      avg = submissions[i].submission.score;
       sumOFMaxPoints += maxPoints;
 
       if (existingLearner) {
-        existingLearner.avg += avg;
-        existingLearner.avg =
-          Math.round((existingLearner.avg / sumOFMaxPoints) * 1000) / 1000;
-        existingLearner[`${submissions[i].assignment_id}`] =
-          Math.round((avg / maxPoints) * 1000) / 1000;
+        existingLearner.avg += score;
+        existingLearner.avg = calcAvg(existingLearner.avg, sumOFMaxPoints);
+        existingLearner[`${submissions[i].assignment_id}`] = calcAvg(
+          score,
+          maxPoints
+        );
         sumOFMaxPoints = 0;
       } else {
         learner.id = submissions[i].learner_id;
-        learner.avg = avg;
-        learner[`${submissions[i].assignment_id}`] =
-          Math.round((avg / maxPoints) * 1000) / 1000;
+        learner.avg = score;
+        learner[`${submissions[i].assignment_id}`] = calcAvg(score, maxPoints);
         result.push(learner);
       }
     }
   }
   return result;
 
-  // const result = [
+  // const r = [
   //   {
   //     id: 125,
   //     avg: 0.985, // (47 + 150) / (50 + 150)
@@ -198,7 +202,7 @@ function getLearnerData(course, ag, submissions) {
   //   },
   // ];
 
-  return result;
+  // return r;
 }
 
 const result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
