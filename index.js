@@ -16,7 +16,7 @@ const AssignmentGroup = {
       id: 1,
       name: "Declare a Variable",
       due_at: "2023-01-25",
-      points_possible: 50,
+      points_possible: 0,
     },
     {
       id: 2,
@@ -153,21 +153,26 @@ function getLearnerData(course, ag, submissions) {
     const assigment = ag.assignments.find((a) => {
       return a.id === s.assignment_id;
     });
+    let maxPoints = assigment.points_possible;
+    if (maxPoints === 0) {
+      //if possible_points = 0 assume that learner achieve max of points :)
+      maxPoints = score;
+    }
     const isDueDatePassedToday = checkIfDateHasPassed(
       assigment.due_at,
       new Date()
     );
+    const isSubmittedLate = checkIfDateHasPassed(
+      assigment.due_at,
+      s.submission.submitted_at
+    );
+    if (isSubmittedLate) {
+      score *= 0.9;
+    }
 
     if (isDueDatePassedToday) {
-      const maxPoints = assigment.points_possible;
-      const isSubmittedLate = checkIfDateHasPassed(
-        assigment.due_at,
-        s.submission.submitted_at
-      );
-      if (isSubmittedLate) {
-        score *= 0.9;
-      }
       //find() returns value of first element it founds that meet below condition
+      //check if the user exists with that id in result array
       const existingLearner = result.find((r) => r.id === s.learner_id);
       sumOFMaxPoints += maxPoints;
 
