@@ -99,11 +99,7 @@ const checkAssigmentGroupCourseId = (course, ag) => {
 //check if LearnerSubmissions assigment_id matches one from AssigmentGroup.assigments[i].id
 const checkLearnerSubmissionsAssigmentId = (ag, submissions) => {
   try {
-    const arrOfAssigmentsIDs = [];
-    ag.assignments.forEach((assigment) => {
-      ///take id of each assigment and store all of them in array
-      arrOfAssigmentsIDs.push(assigment.id);
-    });
+    const arrOfAssigmentsIDs = ag.assignments.map((a) => a.id);
     //for each learner submission
     submissions.forEach((s) => {
       for (let i = 0; i < arrOfAssigmentsIDs.length; i++) {
@@ -127,28 +123,20 @@ const checkLearnerSubmissionsAssigmentId = (ag, submissions) => {
   }
 };
 
-const checkIdDateIsBeforeToday = (date) => {
-  return new Date(date) < new Date(new Date().toDateString());
-};
-
-// Validate the due date of assigment
-const checkIfDueDateHasPassed = (ag, id) => {
-  for (let assigment of ag.assignments) {
-    if (assigment.id === id) {
-      if (checkIdDateIsBeforeToday(assigment.due_at)) {
-        //console.log("It has passed due date!");
-        return true;
-      } else {
-        //console.log("Not due yet");
-        return false;
-      }
-    }
-  }
-};
-
 //calculate average and round to 3 decimal places
 const calcAvg = (score, maxPoints) => {
   return Math.round((score / maxPoints) * 1000) / 1000;
+};
+
+// check is subbmision date excided the due date
+//or
+// check if assigment passed the due_date, if yes, do not include in the result
+const checkIfDateHasPassed = (dateA, dateB) => {
+  if (new Date(dateA) < new Date(dateB)) {
+    return true;
+  } else {
+    return false;
+  }
 };
 
 function getLearnerData(course, ag, submissions) {
@@ -161,11 +149,24 @@ function getLearnerData(course, ag, submissions) {
   submissions.forEach((s) => {
     const learner = {};
     let score = s.submission.score;
-    if (checkIfDueDateHasPassed(ag, s.assignment_id)) {
-      const assigment = ag.assignments.find((a) => {
-        return a.id === s.assignment_id;
-      });
+
+    const assigment = ag.assignments.find((a) => {
+      return a.id === s.assignment_id;
+    });
+    const isDueDatePassedToday = checkIfDateHasPassed(
+      assigment.due_at,
+      new Date()
+    );
+
+    if (isDueDatePassedToday) {
       const maxPoints = assigment.points_possible;
+      const isSubmittedLate = checkIfDateHasPassed(
+        assigment.due_at,
+        s.submission.submitted_at
+      );
+      if (isSubmittedLate) {
+        score *= 0.9;
+      }
       //find() returns value of first element it founds that meet below condition
       const existingLearner = result.find((r) => r.id === s.learner_id);
       sumOFMaxPoints += maxPoints;
