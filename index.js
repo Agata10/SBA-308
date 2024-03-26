@@ -162,20 +162,21 @@ function getLearnerData(course, ag, submissions) {
       const existingLearner = result.find(
         (r) => r.id === submissions[i].learner_id
       );
+      avg = submissions[i].submission.score;
+      sumOFMaxPoints += maxPoints;
 
       if (existingLearner) {
-        avg = submissions[i].submission.score;
-        sumOFMaxPoints += maxPoints;
         existingLearner.avg += avg;
         existingLearner.avg =
-          Math.floor((existingLearner.avg / sumOFMaxPoints) * 100) / 100;
-        existingLearner[`${submissions[i].assignment_id}`] = avg / maxPoints;
+          Math.round((existingLearner.avg / sumOFMaxPoints) * 1000) / 1000;
+        existingLearner[`${submissions[i].assignment_id}`] =
+          Math.round((avg / maxPoints) * 1000) / 1000;
         sumOFMaxPoints = 0;
       } else {
-        sumOFMaxPoints += maxPoints;
         learner.id = submissions[i].learner_id;
-        learner.avg = submissions[i].submission.score;
-        learner[`${submissions[i].assignment_id}`] = learner.avg / maxPoints;
+        learner.avg = avg;
+        learner[`${submissions[i].assignment_id}`] =
+          Math.round((avg / maxPoints) * 1000) / 1000;
         result.push(learner);
       }
     }
