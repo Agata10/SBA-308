@@ -68,40 +68,40 @@ All data validation uses try catch to handle errors. If data is wrong it stops p
 
 1. Checks if AssigmentGroup object has matching course_id with CourseInfo.id
 
-```javacript
-const checkAssigmentGroupCourseId = (course, ag)
+```javascript
+const checkAssigmentGroupCourseId = (course, ag);
 ```
 
 2. Checks if LearnerSubmissions assigment_id matches one from AssigmentGroup assigments id
 
-```javacript
-const checkLearnerSubmissionsAssigmentId = (ag, submissions)
+```javascript
+const checkLearnerSubmissionsAssigmentId = (ag, submissions);
 ```
 
 3. Checks if LearnerSubmissions data has proper format (string/number)
 
-```javacript
+```javascript
 const validateSubmissionsData = (submissions) =>
 ```
 
 4.  Checks if AssigmentGroup data has proper format (string/number)
 
-```javacript
-const validateAssigmentGroupData = (ag)
+```javascript
+const validateAssigmentGroupData = ag;
 ```
 
 **CALCULATIONS FUNCTIONS**
 
 1. Calculate average and round to 3 decimal places
 
-```javacript
-const calcAvg = (score, maxPoints)
+```javascript
+const calcAvg = (score, maxPoints);
 ```
 
 2. Calcualte score, check if submitted late, if yes take 10% of score
 
-```javacript
-const calcScore = (assigment, s)
+```javascript
+const calcScore = (assigment, s);
 ```
 
 3. Check if date has passed:
