@@ -124,7 +124,7 @@ const checkLearnerSubmissionsAssigmentId = (ag, submissions) => {
 };
 
 //calculate average and round to 3 decimal places
-const calcAvg = (score, maxPoints) => {
+const calcAvg = (score, maxPoints, error) => {
   return Math.round((score / maxPoints) * 1000) / 1000;
 };
 
@@ -145,19 +145,32 @@ function getLearnerData(course, ag, submissions) {
 
   const result = [];
   let sumOFMaxPoints = 0;
+  let errorZero = false;
 
   submissions.forEach((s) => {
     const learner = {};
     let score = s.submission.score;
-
     const assigment = ag.assignments.find((a) => {
       return a.id === s.assignment_id;
     });
+
     let maxPoints = assigment.points_possible;
-    if (maxPoints === 0) {
-      //if possible_points = 0 assume that learner achieve max of points :)
-      maxPoints = score;
+
+    try {
+      if (maxPoints <= 0) {
+        maxPoints = score;
+        throw new Error("ZERO: ");
+      }
+    } catch (err) {
+      //errZero is making sure the err prints only one in loop
+      if (!errorZero) {
+        console.log(
+          `${err} Fix points_possible in AssigmentGroup, can't be less or equal to zero"`
+        );
+        errorZero = true;
+      }
     }
+
     const isDueDatePassedToday = checkIfDateHasPassed(
       assigment.due_at,
       new Date()
