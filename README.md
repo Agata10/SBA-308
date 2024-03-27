@@ -59,7 +59,7 @@ Run with node.js
 - **AssigmentGroup:** is object, with _id_, _name_, _course-id_ that matches CourseInfo._id_ and _assigments_ array containing **AssigmentInfo** objects with:_id_,_name_,_due_at_ and _points_possible_
 - **LearnerSubmisions:** is array of objects with: _learner-id_, _assigment_id_ matching AssigmentInfo._id_, _submission_ object with: _submitted_at_, _score_
 
-## Functions Description
+## Functions Descriptions
 
 The task was to create function `getLearnerData(course, ag, submissions)` to return the [result](#result).
 
