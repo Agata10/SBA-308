@@ -8,9 +8,8 @@ Skill based assessment for JavaScript Fundamentals
 - [Technologies](#technologies)
 - [Run Locally](#run-locally)
 - [Data provided](#data-provided)
-- [Functions descriptions](#functions)
+- [Functions descriptions](#functions-descriptions)
 - [Result](#result)
-- [Lessons](#lessons-learned)
 
 ## About
 
@@ -65,8 +64,71 @@ Run with node.js
 The task was to create function `getLearnerData(course, ag, submissions)` to return the [result](#result).
 
 **Data Validation Functions\***
+All data validation uses try catch to handle errors. If data is wrong it stops porgram and lets user know to fix the data.
 
-`javacript`
+1. Checks if AssigmentGroup object has matching course_id with CourseInfo.id
+
+```javacript
+const checkAssigmentGroupCourseId = (course, ag)
+```
+
+2. Checks if LearnerSubmissions assigment_id matches one from AssigmentGroup assigments id
+
+```javacript
+const checkLearnerSubmissionsAssigmentId = (ag, submissions)
+```
+
+3. Checks if LearnerSubmissions data has proper format (string/number)
+
+```javacript
+const validateSubmissionsData = (submissions) =>
+```
+
+4.  Checks if AssigmentGroup data has proper format (string/number)
+
+```javacript
+const validateAssigmentGroupData = (ag)
+```
+
+**_CALCULATIONS FUNCTIONS_**
+
+1. Calculate average and round to 3 decimal places
+
+```javacript
+const calcAvg = (score, maxPoints)
+```
+
+2. Calcualte score, check if submitted late, if yes take 10% of score
+
+```javacript
+const calcScore = (assigment, s)
+```
+
+3. Check if date has passed:
+
+- used to check is subbmision date of learner subbision excided the due date of assigment
+- used to check if assigment passed the due_date, if yes, did not included in the result
+
+```javascript
+const checkIfDateHasPassed = (dateA, dateB);
+```
+
+**_MAIN FUNCTION_**
+
+```javascript
+function getLearnerData(course, ag, submissions)
+```
+
+1. It calls the validation data functions, if wrong data, shows error and stops porgram
+2. It creates result array
+3. It loops through all the submissions of submissions:
+
+- creates learner object to store each learner
+- it checks if assigment date is not due yet, if it's not it skips the assigment
+- it checks possible_points of assigment, if data is incorrect it throw error and assumes that the possible_points = score, which means learner got 100% of possible_points
+- if due date has passed, it checks if learner of current submission exists in result array and based on that it creates properties of learner object or adds it to existing user
+
+- the function return array
 
 ## Result
 
@@ -78,5 +140,3 @@ The result should be printed in the console like below:
   { 1: 0.78, 2: 0.84, id: 132, avg: 0.825 },
 ];
 ```
-
-## Lessons Learned
