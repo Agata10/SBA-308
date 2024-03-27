@@ -39,7 +39,7 @@ const AssignmentGroup = {
 const LearnerSubmissions = [
   {
     learner_id: 125,
-    // change assigment_id for the one that is dffrent from AssigmentGroup.assigments.id
+    // 4. change assigment_id for the one that is dffrent from AssigmentGroup.assigments.id
     // to test try catch
     assignment_id: 1,
     submission: {
@@ -229,11 +229,12 @@ function getLearnerData(course, ag, submissions) {
       assigment.due_at,
       new Date().toDateString()
     );
-    let maxPoints = assigment.points_possible;
+    let possiblePoints = assigment.points_possible;
 
+    // catch err when points_possible <= 0
     try {
-      if (maxPoints <= 0) {
-        maxPoints = score;
+      if (possiblePoints <= 0) {
+        possiblePoints = score;
         throw new Error("ZERO: ");
       }
     } catch (err) {
@@ -251,39 +252,22 @@ function getLearnerData(course, ag, submissions) {
       //find() returns value of first element it founds that meet below condition
       //check if the user exists with that id in result array
       const existingLearner = result.find((r) => r.id === s.learner_id);
-      sumOFMaxPoints += maxPoints;
+      sumOFMaxPoints += possiblePoints;
 
       if (existingLearner) {
         existingLearner.avg += score;
         existingLearner.avg = calcAvg(existingLearner.avg, sumOFMaxPoints);
-        existingLearner[`${s.assignment_id}`] = calcAvg(score, maxPoints);
+        existingLearner[`${s.assignment_id}`] = calcAvg(score, possiblePoints);
         sumOFMaxPoints = 0;
       } else {
         learner.id = s.learner_id;
         learner.avg = score;
-        learner[`${s.assignment_id}`] = calcAvg(score, maxPoints);
+        learner[`${s.assignment_id}`] = calcAvg(score, possiblePoints);
         result.push(learner);
       }
     }
   });
   return result;
-
-  // const r = [
-  //   {
-  //     id: 125,
-  //     avg: 0.985, // (47 + 150) / (50 + 150)
-  //     1: 0.94, // 47 / 50
-  //     2: 1.0, // 150 / 150
-  //   },
-  //   {
-  //     id: 132,
-  //     avg: 0.82, // (39 + 125) / (50 + 150)
-  //     1: 0.78, // 39 / 50
-  //     2: 0.833, // late: (140 - 15) / 150 /// -14 becasue 10% , it's mistake in calculation provided
-  //   },
-  // ];
-
-  // return r;
 }
 
 const result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
