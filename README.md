@@ -63,7 +63,7 @@ Run with node.js
 
 The task was to create function `getLearnerData(course, ag, submissions)` to return the [result](#result).
 
-**Data Validation Functions\***
+**Data Validation Functions**
 All data validation uses try catch to handle errors. If data is wrong it stops porgram and lets user know to fix the data.
 
 1. Checks if AssigmentGroup object has matching course_id with CourseInfo.id
@@ -90,7 +90,7 @@ const validateSubmissionsData = (submissions) =>
 const validateAssigmentGroupData = (ag)
 ```
 
-**_CALCULATIONS FUNCTIONS_**
+**CALCULATIONS FUNCTIONS**
 
 1. Calculate average and round to 3 decimal places
 
@@ -113,7 +113,7 @@ const calcScore = (assigment, s)
 const checkIfDateHasPassed = (dateA, dateB);
 ```
 
-**_MAIN FUNCTION_**
+**MAIN FUNCTION**
 
 ```javascript
 function getLearnerData(course, ag, submissions)
