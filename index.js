@@ -124,8 +124,33 @@ const checkLearnerSubmissionsAssigmentId = (ag, submissions) => {
   }
 };
 
+const validateSubmissionsData = (submissions) => {
+  let isValid = true;
+  submissions.forEach((s, index) => {
+    try {
+      if (
+        typeof s.submission.score === "string" ||
+        typeof s.learner_id === "string" ||
+        typeof s.assignment_id === "string"
+      ) {
+        throw new Error(
+          `LearnerSubmissions data at index ${index} is a string, expected number`
+        );
+      } else if (typeof s.submission.due_at === "number") {
+        throw new Error(
+          `Date of Learner ${s.learner_id} is number, expected string`
+        );
+      }
+    } catch (err) {
+      isValid = false;
+      console.log(`${err}`);
+    }
+  });
+  return isValid;
+};
+
 //calculate average and round to 3 decimal places
-const calcAvg = (score, maxPoints, error) => {
+const calcAvg = (score, maxPoints) => {
   return Math.round((score / maxPoints) * 1000) / 1000;
 };
 
@@ -154,6 +179,9 @@ const calcScore = (assigment, s) => {
 };
 
 function getLearnerData(course, ag, submissions) {
+  if (!validateSubmissionsData(submissions)) {
+    return "Fix the data";
+  }
   checkAssigmentGroupCourseId(course, ag);
   checkLearnerSubmissionsAssigmentId(ag, submissions);
 
