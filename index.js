@@ -140,7 +140,7 @@ const checkIfDateHasPassed = (dateA, dateB) => {
   }
 };
 
-//check if submitted late, if yes take 10% of grade
+//check if submitted late, if yes take 10% of score
 const calcScore = (assigment, s) => {
   let score = s.submission.score;
   const isSubmittedLate = checkIfDateHasPassed(
@@ -150,7 +150,6 @@ const calcScore = (assigment, s) => {
   if (isSubmittedLate) {
     score *= 0.9;
   }
-
   return score;
 };
 
@@ -168,6 +167,10 @@ function getLearnerData(course, ag, submissions) {
       return a.id === s.assignment_id;
     });
     const score = calcScore(assigment, s);
+    const isDueDatePassedToday = checkIfDateHasPassed(
+      assigment.due_at,
+      new Date()
+    );
     let maxPoints = assigment.points_possible;
 
     try {
@@ -185,11 +188,6 @@ function getLearnerData(course, ag, submissions) {
         errorZero = true;
       }
     }
-
-    const isDueDatePassedToday = checkIfDateHasPassed(
-      assigment.due_at,
-      new Date()
-    );
 
     if (isDueDatePassedToday) {
       //find() returns value of first element it founds that meet below condition
