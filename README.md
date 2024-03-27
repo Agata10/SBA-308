@@ -1,6 +1,6 @@
 # SBA-308
 
-Skill based assessment for JavaScript Fundamentals
+Skill based assigment for JavaScript Fundamentals
 
 ## Table of Contents
 
