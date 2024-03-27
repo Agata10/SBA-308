@@ -93,7 +93,7 @@ const checkAssigmentGroupCourseId = (course, ag) => {
       );
     }
   } catch (err) {
-    console.log(`${err}\nPlease enter correct data.\n`);
+    console.log(`${err}\nExpected ${course.id} but got ${ag.course_id}\n`);
   }
 };
 
@@ -184,7 +184,6 @@ function getLearnerData(course, ag, submissions) {
   }
   checkAssigmentGroupCourseId(course, ag);
   checkLearnerSubmissionsAssigmentId(ag, submissions);
-
   const result = [];
   let sumOFMaxPoints = 0;
   let errorZero = false;
@@ -197,7 +196,7 @@ function getLearnerData(course, ag, submissions) {
     const score = calcScore(assigment, s);
     const isDueDatePassedToday = checkIfDateHasPassed(
       assigment.due_at,
-      new Date()
+      new Date().toDateString()
     );
     let maxPoints = assigment.points_possible;
 
