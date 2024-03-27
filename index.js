@@ -10,18 +10,19 @@ const AssignmentGroup = {
   name: "Fundamentals of JavaScript",
   ///1. change course_id to mismatch the CourseInfo.id to test try catch
   course_id: 451,
-  group_weight: 25, ///the percentage weight of the entaire assigment group
+  group_weight: 25,
   assignments: [
     {
       id: 1,
       name: "Declare a Variable",
       due_at: "2023-01-25",
-      points_possible: 0,
+      points_possible: 50,
     },
     {
       id: 2,
       name: "Write a Function",
-      ///2. change to be not due yet, year 2032 for example
+      ///2. change to be not due yet, year 2032 for example to test try catch
+      ///3. change points_possible to 0 to test try catch
       due_at: "2023-02-27",
       points_possible: 150,
     },
@@ -139,6 +140,20 @@ const checkIfDateHasPassed = (dateA, dateB) => {
   }
 };
 
+//check if submitted late, if yes take 10% of grade
+const calcScore = (assigment, s) => {
+  let score = s.submission.score;
+  const isSubmittedLate = checkIfDateHasPassed(
+    assigment.due_at,
+    s.submission.submitted_at
+  );
+  if (isSubmittedLate) {
+    score *= 0.9;
+  }
+
+  return score;
+};
+
 function getLearnerData(course, ag, submissions) {
   checkAssigmentGroupCourseId(course, ag);
   checkLearnerSubmissionsAssigmentId(ag, submissions);
@@ -149,10 +164,10 @@ function getLearnerData(course, ag, submissions) {
 
   submissions.forEach((s) => {
     const learner = {};
-    let score = s.submission.score;
     const assigment = ag.assignments.find((a) => {
       return a.id === s.assignment_id;
     });
+    const score = calcScore(assigment, s);
     let maxPoints = assigment.points_possible;
 
     try {
@@ -175,13 +190,6 @@ function getLearnerData(course, ag, submissions) {
       assigment.due_at,
       new Date()
     );
-    const isSubmittedLate = checkIfDateHasPassed(
-      assigment.due_at,
-      s.submission.submitted_at
-    );
-    if (isSubmittedLate) {
-      score *= 0.9;
-    }
 
     if (isDueDatePassedToday) {
       //find() returns value of first element it founds that meet below condition
@@ -215,7 +223,7 @@ function getLearnerData(course, ag, submissions) {
   //     id: 132,
   //     avg: 0.82, // (39 + 125) / (50 + 150)
   //     1: 0.78, // 39 / 50
-  //     2: 0.833, // late: (140 - 15) / 150
+  //     2: 0.833, // late: (140 - 15) / 150 /// -14 becasue 10% , it's mistake in calculation provided
   //   },
   // ];
 
