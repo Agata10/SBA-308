@@ -21,7 +21,7 @@ const AssignmentGroup = {
     {
       id: 2,
       name: "Write a Function",
-      ///2. change to be not due yet, year 2032 for example to test try catch
+      ///2. change to be not due yet, year 2032 for example to see it will be skipped
       ///3. change points_possible to 0 to test try catch
       due_at: "2023-02-27",
       points_possible: 150,
@@ -39,7 +39,7 @@ const AssignmentGroup = {
 const LearnerSubmissions = [
   {
     learner_id: 125,
-    // change assigment for the one that is dffrent from AssigmentGroup.assigments.id
+    // change assigment_id for the one that is dffrent from AssigmentGroup.assigments.id
     // to test try catch
     assignment_id: 1,
     submission: {
@@ -84,6 +84,7 @@ const LearnerSubmissions = [
 // DATA VALIDATION FUNCTIONS
 // Check is AssigmentGroup course_id property matches CourseInfo id value
 const checkAssigmentGroupCourseId = (course, ag) => {
+  let isValid = true;
   try {
     if (ag.course_id === course.id) {
       return true;
@@ -93,12 +94,15 @@ const checkAssigmentGroupCourseId = (course, ag) => {
       );
     }
   } catch (err) {
-    console.log(`${err}\nExpected ${course.id} but got ${ag.course_id}\n`);
+    console.log(`${err}\nExpected ${course.id} but got ${ag.course_id}`);
+    isValid = false;
   }
+  return isValid;
 };
 
 //check if LearnerSubmissions assigment_id matches one from AssigmentGroup.assigments[i].id
 const checkLearnerSubmissionsAssigmentId = (ag, submissions) => {
+  let isValid = true;
   try {
     const arrOfAssigmentsIDs = ag.assignments.map((a) => a.id);
     //for each learner submission
@@ -121,7 +125,9 @@ const checkLearnerSubmissionsAssigmentId = (ag, submissions) => {
     console.log(
       `${err}\nPlease make sure LearnerSubmissions has assigment_id matching one from AssigmentGroup assigments ids`
     );
+    isValid = false;
   }
+  return isValid;
 };
 
 const validateSubmissionsData = (submissions) => {
@@ -136,9 +142,30 @@ const validateSubmissionsData = (submissions) => {
         throw new Error(
           `LearnerSubmissions data at index ${index} is a string, expected number`
         );
-      } else if (typeof s.submission.due_at === "number") {
+      } else if (typeof s.submission.submitted_at === "number") {
         throw new Error(
-          `Date of Learner ${s.learner_id} is number, expected string`
+          `LearnerSubmissions data at index ${index}  is number, expected string`
+        );
+      }
+    } catch (err) {
+      isValid = false;
+      console.log(`${err}`);
+    }
+  });
+  return isValid;
+};
+
+const validateAssigmentGroupData = (ag) => {
+  let isValid = true;
+  ag.assignments.forEach((a, index) => {
+    try {
+      if (typeof a.id === "string" || typeof a.points_possible === "string") {
+        throw new Error(
+          `AssigmentGroup data at index ${index} is a string, expected number`
+        );
+      } else if (typeof a.due_at === "number") {
+        throw new Error(
+          `AssigmentGroup data at index ${index} is number, expected string`
         );
       }
     } catch (err) {
@@ -179,11 +206,15 @@ const calcScore = (assigment, s) => {
 };
 
 function getLearnerData(course, ag, submissions) {
-  if (!validateSubmissionsData(submissions)) {
+  if (
+    !validateSubmissionsData(submissions) ||
+    !validateAssigmentGroupData(ag) ||
+    !checkAssigmentGroupCourseId(course, ag) ||
+    !checkLearnerSubmissionsAssigmentId(ag, submissions)
+  ) {
     return "Fix the data";
   }
-  checkAssigmentGroupCourseId(course, ag);
-  checkLearnerSubmissionsAssigmentId(ag, submissions);
+
   const result = [];
   let sumOFMaxPoints = 0;
   let errorZero = false;
@@ -209,7 +240,7 @@ function getLearnerData(course, ag, submissions) {
       //errZero is making sure the err prints only one in loop
       if (!errorZero) {
         console.log(
-          `${err} Fix points_possible in AssigmentGroup, can't be less or equal to zero`
+          `${err} Fix points_possible in AssigmentGroup at ${assigment.id} id, can't be less or equal to zero`
         );
         console.log("Assumed possible_points = score so learner got 100%\n");
         errorZero = true;
