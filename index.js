@@ -153,7 +153,6 @@ function getLearnerData(course, ag, submissions) {
     const assigment = ag.assignments.find((a) => {
       return a.id === s.assignment_id;
     });
-
     let maxPoints = assigment.points_possible;
 
     try {
@@ -165,8 +164,9 @@ function getLearnerData(course, ag, submissions) {
       //errZero is making sure the err prints only one in loop
       if (!errorZero) {
         console.log(
-          `${err} Fix points_possible in AssigmentGroup, can't be less or equal to zero"`
+          `${err} Fix points_possible in AssigmentGroup, can't be less or equal to zero`
         );
+        console.log("Assumed possible_points = score so learner got 100%\n");
         errorZero = true;
       }
     }
