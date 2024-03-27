@@ -8,7 +8,7 @@ Skill based assigment for JavaScript Fundamentals
 - [Technologies](#technologies)
 - [Run Locally](#run-locally)
 - [Data provided](#data-provided)
-- [Functions descriptions](#functions-descriptions)
+- [Functions descriptions](#functions)
 - [Result](#result)
 
 ## About
